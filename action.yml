@@ -1,9 +1,15 @@
-name: close-matching-issues
-description: Closes issues matching a query
+name: close-matching-issues-repo
+description: Closes issues matching a query from specified repo or current
 branding:
   icon: check-circle
   color: red
 inputs:
+  repo:
+    description: The repo name
+    required: false
+  owner:
+    description: The repo owner name
+    required: false
   token:
     description: Token to use to execute the search
     required: true

@@ -57,7 +57,7 @@ describe('getIssueNumbers', () => {
       },
     })
 
-    const numbers = await getIssueNumbers(octokit, issueTestQuery)
+    const numbers = await getIssueNumbers(octokit, github.context.repo, issueTestQuery)
 
     expect((requestBody as Record<string, any>).variables.searchQuery).toBe(
       `repo:test-owner/test-repo ${issueTestQuery}`
@@ -87,7 +87,7 @@ describe('getIssueNumbers', () => {
       },
     })
 
-    const numbers = await getIssueNumbers(octokit, prTestQuery)
+    const numbers = await getIssueNumbers(octokit, github.context.repo, prTestQuery)
 
     expect((requestBody as Record<string, any>).variables.searchQuery).toBe(
       `repo:test-owner/test-repo ${prTestQuery}`
@@ -104,7 +104,7 @@ describe('getIssueNumbers', () => {
       },
     })
 
-    const numbers = await getIssueNumbers(octokit, issueTestQuery)
+    const numbers = await getIssueNumbers(octokit, github.context.repo, issueTestQuery)
 
     expect((requestBody as Record<string, any>).variables.searchQuery).toBe(
       `repo:test-owner/test-repo ${issueTestQuery}`

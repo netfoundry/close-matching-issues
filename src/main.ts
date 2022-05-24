@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import { Context } from '@actions/github/lib/context'
 
 import { GitHub } from '@actions/github/lib/utils'
 
@@ -7,6 +8,11 @@ import { formatNameWithOwner } from './utils'
 
 interface IssueNumber {
   number: number
+}
+
+interface Repo{
+  owner: string;
+  repo: string;
 }
 
 export type GitHubClient = InstanceType<typeof GitHub>
@@ -27,22 +33,21 @@ query($searchQuery: String!) {
 }
 `
 
-async function closeIssues(octokit: GitHubClient, numbers: Array<number>) {
-  const context = github.context
+async function closeIssues(octokit: GitHubClient, repo: Repo, numbers: Array<number>) {
 
   return numbers.map(async (number) => {
-    core.debug(`Close https://github.com/${formatNameWithOwner(context.repo)}/issues/${number}`)
+    core.debug(`Close https://github.com/${formatNameWithOwner(repo)}/issues/${number}`)
 
-    return octokit.issues.update({ ...context.repo, issue_number: number, state: 'closed' })
+    return octokit.issues.update({ ...repo, issue_number: number, state: 'closed' })
   })
 }
 
 export async function getIssueNumbers(
   octokit: GitHubClient,
+  repo: Repo,
   searchQuery: string
 ): Promise<Array<number>> {
-  const context = github.context
-  const queryText = `repo:${formatNameWithOwner(context.repo)} ${searchQuery}`
+  const queryText = `repo:${formatNameWithOwner(repo)} ${searchQuery}`
 
   core.debug(`Query: ${queryText}`)
 
@@ -71,11 +76,26 @@ async function run() {
       throw new Error('`query` is a required input parameter')
     }
 
+   
+
+
     const octokit = github.getOctokit(token)
 
-    const issueNumbers = await getIssueNumbers(octokit, searchQuery)
 
-    await closeIssues(octokit, issueNumbers)
+    const repoName = core.getInput('repo')
+    const ownerName = core.getInput('owner')
+
+    const repo: Repo = {...github.context.repo};
+    if(repoName && repoName !== ""){
+      repo.repo = repoName;
+    }
+    if(ownerName && ownerName !== ""){
+      repo.owner = ownerName;
+    }
+
+    const issueNumbers = await getIssueNumbers(octokit,repo, searchQuery)
+
+    await closeIssues(octokit,repo, issueNumbers)
   } catch (error) {
     core.setFailed(error.message)
   }
