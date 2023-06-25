@@ -38,7 +38,7 @@ async function closeIssues(octokit: GitHubClient, repo: Repo, numbers: Array<num
   return numbers.map(async (number) => {
     core.debug(`Close https://github.com/${formatNameWithOwner(repo)}/issues/${number}`)
 
-    return octokit.issues.update({ ...repo, issue_number: number, state: 'closed' })
+    return octokit.rest.issues.update({ ...repo, issue_number: number, state: 'closed' })
   })
 }
 
