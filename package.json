@@ -1,6 +1,6 @@
 {
   "name": "close-matching-issues",
-  "version": "0.0.0",
+  "version": "4.0.0",
   "private": true,
   "description": "A GitHub Action for closing issues matching a search query",
   "main": "dist/index.js",
