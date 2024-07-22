@@ -17,5 +17,5 @@ inputs:
     description: Query to use to search for matching issues
     required: true
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
