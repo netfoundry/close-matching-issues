@@ -10,9 +10,9 @@ interface IssueNumber {
   number: number
 }
 
-interface Repo{
-  owner: string;
-  repo: string;
+interface Repo {
+  owner: string
+  repo: string
 }
 
 export type GitHubClient = InstanceType<typeof GitHub>
@@ -34,11 +34,10 @@ query($searchQuery: String!) {
 `
 
 async function closeIssues(octokit: GitHubClient, repo: Repo, numbers: Array<number>) {
-
   return numbers.map(async (number) => {
     core.debug(`Close https://github.com/${formatNameWithOwner(repo)}/issues/${number}`)
 
-    return octokit.issues.update({ ...repo, issue_number: number, state: 'closed' })
+    return octokit.rest.issues.update({ ...repo, issue_number: number, state: 'closed' })
   })
 }
 
@@ -76,26 +75,22 @@ async function run() {
       throw new Error('`query` is a required input parameter')
     }
 
-   
-
-
     const octokit = github.getOctokit(token)
-
 
     const repoName = core.getInput('repo')
     const ownerName = core.getInput('owner')
 
-    const repo: Repo = {...github.context.repo};
-    if(repoName && repoName !== ""){
-      repo.repo = repoName;
+    const repo: Repo = { ...github.context.repo }
+    if (repoName && repoName !== '') {
+      repo.repo = repoName
     }
-    if(ownerName && ownerName !== ""){
-      repo.owner = ownerName;
+    if (ownerName && ownerName !== '') {
+      repo.owner = ownerName
     }
 
-    const issueNumbers = await getIssueNumbers(octokit,repo, searchQuery)
+    const issueNumbers = await getIssueNumbers(octokit, repo, searchQuery)
 
-    await closeIssues(octokit,repo, issueNumbers)
+    await closeIssues(octokit, repo, issueNumbers)
   } catch (error) {
     core.setFailed(error.message)
   }
